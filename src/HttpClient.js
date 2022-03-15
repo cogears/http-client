@@ -10,93 +10,122 @@ const MIME_TEXT = [
     /^application\/(json|xml)/
 ]
 
-module.exports = class HttpClient {
-    static text(value) {
-        return new HttpBody(value)
-    }
+const handles = {}
 
-    static json(value) {
-        return new HttpJson(value)
+function resolveHandles(url, data) {
+    let promises = handles[url]
+    delete handles[url]
+    for (let item of promises) {
+        item.resolve(data)
     }
+}
 
-    static form(value) {
-        return new HttpForm(value)
+function rejectHandles(url, err) {
+    let promises = handles[url]
+    delete handles[url]
+    for (let item of promises) {
+        item.reject(err)
     }
+}
 
-    static file(file, mime, field) {
-        return new HttpMultipart(file, mime, field)
+function text(value) {
+    return new HttpBody(value)
+}
+
+function json(value) {
+    return new HttpJson(value)
+}
+
+function form(value) {
+    return new HttpForm(value)
+}
+
+function file(file, mime, field) {
+    return new HttpMultipart(file, mime, field)
+}
+
+function request(method, url, { headers, query, body }) {
+    let content = ''
+    if (query) {
+        url += (url.indexOf('?') == -1 ? '?' : '&') + HttpForm.encode(query)
     }
-
-    static body(content, contentType) {
-        return new HttpBody(content, contentType)
-    }
-
-    request(method, url, { headers, query, body }, responseBinary) {
-        let content = ''
-        if (query) {
-            url += (url.indexOf('?') == -1 ? '?' : '&') + HttpForm.encode(query)
+    if (body) {
+        if (body instanceof HttpMultipart) {
+        } else {
+            content = body.toString()
+            headers = Object.assign({ 'Content-Type': body.contentType, 'Content-Length': Buffer.byteLength(content) }, headers)
         }
-        if (body) {
-            if (body instanceof HttpMultipart) {
-            } else {
-                content = body.toString()
-                headers = Object.assign({ 'Content-Type': body.contentType, 'Content-Length': Buffer.byteLength(content) }, headers)
+    }
+    method = method.toUpperCase()
+    let options = new URL(url)
+    options.method = method
+    options.headers = headers
+    return new Promise((resolve, reject) => {
+        if (method == 'GET') {
+            if (handles[url]) {
+                handles[url].push({ resolve, reject })
+                return
             }
+            handles[url] = [{ resolve, reject }]
         }
-        let options = new URL(url)
-        options.method = method
-        options.headers = headers
-        return new Promise((resolve, reject) => {
-            let proxy = options.protocol === 'http:' ? http : https
-            let req = proxy.request(options, res => {
-                let buf = []
-                let isText = responseBinary ? false : MIME_TEXT.some(mime => mime.test(res.headers['content-type']))
-                if (isText) {
-                    res.setEncoding('utf8')
-                }
-                res.on('data', chunk => {
-                    buf.push(chunk)
-                })
-                res.on('end', () => {
+        let proxy = options.protocol === 'http:' ? http : https
+        let req = proxy.request(options, res => {
+            let buf = []
+            let isText = MIME_TEXT.some(mime => mime.test(res.headers['content-type']))
+            if (isText) {
+                res.setEncoding('utf8')
+            }
+            res.on('data', chunk => {
+                buf.push(chunk)
+            })
+            res.on('end', () => {
+                if (method == 'GET') {
+                    resolveHandles(url, {
+                        status: res.statusCode,
+                        headers: res.headers,
+                        body: isText ? buf.join('') : Buffer.concat(buf)
+                    })
+                } else {
                     resolve({
                         status: res.statusCode,
                         headers: res.headers,
                         body: isText ? buf.join('') : Buffer.concat(buf)
                     })
-                })
+                }
             })
-            req.on('error', err => {
-                reject(err)
-            })
-            req.setTimeout(60000, () => {
-                req.destroy();
-                reject(new Error('timeout'))
-            })
-            if (body instanceof HttpMultipart) {
-                body.write(req)
+        })
+        req.on('error', err => {
+            if (method == 'GET') {
+                rejectHandles(url, err)
             } else {
-                req.end(content)
+                reject(err)
             }
         })
-    }
+        req.setTimeout(60000, () => {
+            req.destroy()
+            if (method == 'GET') {
+                rejectHandles(new Error('timeout'))
+            } else {
+                reject(new Error('timeout'))
+            }
+        })
+        if (body instanceof HttpMultipart) {
+            body.write(req)
+        } else {
+            req.end(content)
+        }
+    })
+}
 
-    get(api, { headers, query } = {}) {
-        return this.request('GET', api, { headers, query })
-    }
+function get(url, query, headers) {
+    return request('GET', url, { headers, query })
+}
 
-    post(api, { headers, query, body } = {}) {
-        return this.request('POST', api, { headers, query, body })
-    }
+function post(url, body, query, headers) {
+    return request('POST', url, { headers, query, body })
+}
 
-    put(api, { headers, query, body } = {}) {
-        return this.request('PUT', api, { headers, query, body })
-    }
-
-    patch(api, { headers, query, body } = {}) {
-        return this.request('PATCH', api, { headers, query, body })
-    }
-
-    delete(api, { headers, query } = {}) {
-        return this.request('DELETE', api, { headers, query })
-    }
+module.exports = {
+    text, json, form, file,
+    get, post, request,
 }

@@ -1,3 +1,4 @@
-const HttpClient = require('./HttpClient')
+const httpClient = require('./HttpClient')
 
-module.exports = HttpClient
+module.exports = httpClient
+module.exports.default = httpClient

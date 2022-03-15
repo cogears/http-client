@@ -1,21 +1,22 @@
 {
-  "name": "@cogears/http",
+  "name": "@cogears/http-client",
   "version": "1.0.0",
-  "description": "http module",
+  "description": "http client module",
   "main": "src/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "types": "types/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cogears/http.git"
+    "url": "git+https://github.com/cogears/http-client"
   },
   "keywords": [
     "http"
   ],
   "author": "stone",
   "bugs": {
-    "url": "https://github.com/cogears/http/issues"
+    "url": "https://github.com/cogears/http-client/issues"
   },
-  "homepage": "https://github.com/cogears/http#readme"
+  "homepage": "https://github.com/cogears/http-client#readme",
+  "engines": {
+    "node": ">= 16.0.0"
+  }
 }
