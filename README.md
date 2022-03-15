@@ -1,2 +1,2 @@
-# http
+# @cogears/http
 http module

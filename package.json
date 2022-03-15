@@ -1,0 +1,21 @@
+{
+  "name": "@cogears/http",
+  "version": "1.0.0",
+  "description": "http module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cogears/http.git"
+  },
+  "keywords": [
+    "http"
+  ],
+  "author": "stone",
+  "bugs": {
+    "url": "https://github.com/cogears/http/issues"
+  },
+  "homepage": "https://github.com/cogears/http#readme"
+}
