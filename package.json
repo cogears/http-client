@@ -1,6 +1,6 @@
 {
   "name": "@cogears/http-client",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "http client module",
   "main": "src/index.js",
   "types": "types/index.d.ts",

@@ -57,9 +57,6 @@ function request(method, url, { headers, query, body }) {
         }
     }
     method = method.toUpperCase()
-    let options = new URL(url)
-    options.method = method
-    options.headers = headers
     return new Promise((resolve, reject) => {
         if (method == 'GET') {
             if (handles[url]) {
@@ -68,8 +65,8 @@ function request(method, url, { headers, query, body }) {
             }
             handles[url] = [{ resolve, reject }]
         }
-        let proxy = options.protocol === 'http:' ? http : https
-        let req = proxy.request(options, res => {
+        let proxy = /^https:/i.test(url) ? https : http
+        let req = proxy.request(url, { method, headers, }, res => {
             let buf = []
             let isText = MIME_TEXT.some(mime => mime.test(res.headers['content-type']))
             if (isText) {
