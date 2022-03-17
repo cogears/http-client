@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "declaration": false,
+    "module": "commonjs",
+    "target": "ESNext",
+    "noImplicitAny": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "experimentalDecorators": true,
+    "sourceMap": false,
+    "outDir": "./dist",
+    "lib": [
+      "esnext",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ],
+    "types": [
+      "node",
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "types": [
+        "types"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

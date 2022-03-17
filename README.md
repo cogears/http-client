@@ -1,39 +1,33 @@
 # @cogears/http-client
-http client module
+http客户端模块，同时兼容浏览器和node环境。
 
-### api list
 
-###### send http request
-- get(url, query, headers)
-- post(url, body, query, headers)
-- request(method, url, {query, body, headers})
-
-###### generate http body
-- text(content)
-- json(content)
-- form(content)
-- file(content)
-
-###### api class
+### 接口列表
+- HttpClient
 - HttpApi
+  
+具体实现可以查看types定义
 
 
-### example
+### 用例
 
-- simple request
-```javascript
-const http = request('@cogears/http-client')
+- 直接使用HttpClient发起请求，适用于少量http请求的场景：
+```typescript
+import HttpClient from '@cogears/http-client'
 
+const http = new HttpClient()
 let {status, body, headers} = await http.get(url)
+
+await http.post(url, http.json({name:'tom'}))
 
 ```
 
 
-- api set
-```javascript
-const http = require('@cogears/http-client')
+- 使用HttpApi包装器，适用于有大量业务接口需要统一管理的场景：
+```typescript
+import {HttpApi} from '@cogears/http-client'
 
-class MyApi extends http.HttpApi {
+class MyApi extends HttpApi {
     constructor() {
         super(domain)
     }
