@@ -54,7 +54,6 @@ jobs:
         with:
           name: dist
           path: dist
-      - run: ls
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.GH_TOKEN}}
