@@ -1,6 +1,11 @@
 # @cogears/http-client
 http客户端模块，同时兼容浏览器和node环境。
 
+### 安装
+```bash
+npm install @cogears/http-client
+```
+
 
 ### 接口列表
 - HttpClient
