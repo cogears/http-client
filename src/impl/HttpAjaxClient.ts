@@ -33,13 +33,13 @@ export default class HttpAjaxClient extends HttpClient {
                 reject(new Error('请求超时'))
             }
             xhr.timeout = 60000
+            // xhr.responseType = 'blob'
+            xhr.open(method, url, true)
             if (headers) {
                 Object.keys(headers).forEach(key => {
                     xhr.setRequestHeader(key, headers[key])
                 })
             }
-            // xhr.responseType = 'blob'
-            xhr.open(method, url, true)
             if (body instanceof FileBody) {
                 xhr.send(body.form)
             } else {
