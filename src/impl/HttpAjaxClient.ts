@@ -35,15 +35,24 @@ export default class HttpAjaxClient extends HttpClient {
             xhr.timeout = 60000
             // xhr.responseType = 'blob'
             xhr.open(method, url, true)
+            let content = ''
+            if (body) {
+                if (body instanceof FileBody) {
+                } else {
+                    content = body.toString()
+                    headers = Object.assign({ 'Content-Type': body.contentType }, headers)
+                }
+            }
             if (headers) {
                 Object.keys(headers).forEach(key => {
+                    //@ts-ignore
                     xhr.setRequestHeader(key, headers[key])
                 })
             }
             if (body instanceof FileBody) {
                 xhr.send(body.form)
             } else {
-                xhr.send(body ? body.toString() : undefined)
+                xhr.send(body ? content : undefined)
             }
         })
     }
