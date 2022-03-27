@@ -5,7 +5,8 @@ declare class HttpClient {
     text(value: string): HttpBody
     json(value: any): HttpBody
     form(value: any): HttpBody
-    file(field: string, file: any, mime: string): HttpBody
+    file(field: string, file: any, mime?: string): HttpBody
+    fileContent(field: string, content: string, mime?: string): HttpBody
 }
 
 export default HttpClient
@@ -27,5 +28,6 @@ export class HttpApi {
     static text(value: string): HttpBody
     static json(value: any): HttpBody
     static form(value: any): HttpBody
-    static file(field: string, file: any): HttpBody
+    static file(field: string, file: any, mime?: string): HttpBody
+    static fileContent(field: string, content: string, mime?: string): HttpBody
 }

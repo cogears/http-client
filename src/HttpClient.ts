@@ -74,7 +74,11 @@ export default class HttpClient {
         return new HttpForm(value)
     }
 
-    file(field: string, file: any): HttpBody {
+    file(field: string, file: any, mime?: string): HttpBody {
+        throw new Error('该方法必须由子类实现')
+    }
+
+    fileContent(field: string, content: string, mime?: string): HttpBody {
         throw new Error('该方法必须由子类实现')
     }
 }

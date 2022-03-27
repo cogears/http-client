@@ -54,16 +54,26 @@ export default class HttpNodeClient extends HttpClient {
             }
         })
     }
-    file(field: string, file: string) {
-        return new HttpMultipart(file, field)
+
+    file(field: string, file: string, mime: string = 'application/octet-stream') {
+        return new HttpMultipartFile(file, field, mime)
     }
 
+    fileContent(field: string, content: string, mime: string = 'application/octet-stream') {
+        return new HttpMultipartContent(content, field, mime)
+    }
 }
 
 class HttpMultipart extends HttpBody {
+    write(httpRequest: http.ClientRequest) {
+
+    }
+}
+
+class HttpMultipartFile extends HttpMultipart {
     private readonly field: string
-    constructor(file: string, field: string) {
-        super(file, '')
+    constructor(file: string, field: string, mime: string) {
+        super(file, mime)
         this.field = field
     }
 
@@ -87,3 +97,25 @@ class HttpMultipart extends HttpBody {
     }
 }
 
+class HttpMultipartContent extends HttpMultipart {
+    private readonly field: string
+    constructor(content: string, field: string, mime: string) {
+        super(content, mime)
+        this.field = field
+    }
+
+    write(httpRequest: http.ClientRequest) {
+        const size = Buffer.byteLength(this.content)
+        const boundaryKey = Math.random().toString(16)
+        const payload = `--${boundaryKey}\r\n`
+            + `Content-Disposition: form-data; name="${this.field}"; filename="${this.field}"\r\n`
+            + `Content-Type: ${this.contentType}\r\n`
+            + 'Content-Transfer-Encoding: binary\r\n\r\n'
+        const enddata = `\r\n--${boundaryKey}--\r\n`
+        httpRequest.setHeader('Content-Type', 'multipart/form-data; boundary=' + boundaryKey)
+        httpRequest.setHeader('Content-Length', Buffer.byteLength(payload) + Buffer.byteLength(enddata) + size)
+        httpRequest.write(payload)
+        httpRequest.write(this.content)
+        httpRequest.end(enddata)
+    }
+}

@@ -57,15 +57,19 @@ export default class HttpAjaxClient extends HttpClient {
         })
     }
 
-    file(field: string, file: File) {
-        return new FileBody(field, file)
+    file(field: string, file: File, mime: string = 'application/octet-stream') {
+        return new FileBody(field, file, mime)
+    }
+
+    fileContent(field: string, content: string, mime: string = 'application/octet-stream'): HttpBody {
+        return new FileBody(field, content, mime)
     }
 }
 
 class FileBody extends HttpBody {
     readonly form: FormData
-    constructor(field: string, file: File) {
-        super(field, '')
+    constructor(field: string, file: File | string, mime: string) {
+        super(field, mime)
         this.form = new FormData()
         this.form.append(field, file)
     }

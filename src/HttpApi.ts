@@ -69,8 +69,11 @@ export default class HttpApi {
         return http.form(value)
     }
 
-    static file(field: string, file: any): HttpBody {
-        return http.file(field, file)
+    static file(field: string, file: any, mime?: string): HttpBody {
+        return http.file(field, file, mime)
     }
 
+    static fileContent(field: string, content: string, mime?: string): HttpBody {
+        return http.fileContent(field, content, mime)
+    }
 }
