@@ -12,6 +12,9 @@ const MIME_TEXT = [
 
 export default class HttpNodeClient extends HttpClient {
     request0(method: string, url: string, { headers, body }: HttpOptions): Promise<HttpResponse> {
+        if (method == 'JSONP') {
+            method = 'GET'
+        }
         let content = ''
         if (body) {
             if (body instanceof HttpMultipart) {

@@ -10,8 +10,8 @@ export default class HttpApi {
         this.domain = domain
     }
 
-    preRequest({ query, body, headers }: HttpOptions) {
-        return { query, body, headers }
+    preRequest(options: HttpOptions) {
+        return options
     }
 
     async postRequest({ status, body, headers }: HttpResponse, url: string) {
@@ -28,13 +28,17 @@ export default class HttpApi {
         }
     }
 
-    async request(method: string, url: string, { query, body, headers }: HttpOptions): Promise<any> {
+    async request(method: string, url: string, options: HttpOptions): Promise<any> {
         if (!/^https?:\/\//i.test(url)) {
             url = this.domain + url
         }
-        let options = this.preRequest({ query, body, headers })
+        options = this.preRequest(options)
         let response = await http.request(method, url, options)
         return await this.postRequest(response, url)
+    }
+
+    jsonp(url: string, query: Record<string, any>, jsonpCallback: string) {
+        return this.request('jsonp', url, { query, jsonpCallback })
     }
 
     get(url: string, query?: Record<string, any>, headers?: Record<string, string>) {

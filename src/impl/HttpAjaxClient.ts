@@ -11,8 +11,30 @@ function parseHeaders(content: string) {
     return headers
 }
 
+let seed = 0
 export default class HttpAjaxClient extends HttpClient {
-    request0(method: string, url: string, { headers, body }: HttpOptions): Promise<HttpResponse> {
+
+    doJsonp(url: string, jsonpCallback: string): Promise<HttpResponse> {
+        const jsonp = 'jcb' + seed++;
+        url = url + (url.indexOf('?') == -1 ? '?' : '&') + `${jsonpCallback}=${jsonp}`
+        return new Promise(resolve => {
+            let request = document.createElement('script');
+            request.src = url;
+            //@ts-ignore
+            window[jsonp] = (data: any) => {
+                //@ts-ignore
+                delete window[jsonp];
+                document.getElementsByTagName('head')[0].removeChild(request);
+                resolve({ status: 200, body: data, headers: {} });
+            }
+            document.getElementsByTagName('head')[0].appendChild(request);
+        })
+    }
+
+    request0(method: string, url: string, { headers, body, jsonpCallback }: HttpOptions): Promise<HttpResponse> {
+        if (method == 'JSONP' && jsonpCallback) {
+            return this.doJsonp(url, jsonpCallback)
+        }
         return new Promise((resolve, reject) => {
             let xhr = new XMLHttpRequest()
             xhr.onreadystatechange = function () {

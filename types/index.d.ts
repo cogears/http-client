@@ -1,5 +1,6 @@
 declare class HttpClient {
     request(method: string, url: string, options: HttpOptions): Promise<HttpResponse>
+    jsonp(url: string, query: Record<string, any>, jsonpCallback: string): Promise<HttpResponse>
     get(url: string, query?: Record<string, any>, headers?: Record<string, string>): Promise<HttpResponse>
     post(url: string, body?: any, query?: Record<string, any>, headers?: Record<string, string>): Promise<HttpResponse>
     text(value: string): HttpBody
@@ -10,7 +11,7 @@ declare class HttpClient {
 }
 
 export default HttpClient
-export type HttpOptions = { headers?: Record<string, string>, query?: Record<string, any>, body?: HttpBody }
+export type HttpOptions = { headers?: Record<string, string>, query?: Record<string, any>, body?: HttpBody, jsonpCallback?: string }
 export type HttpResponse = { status: number, body: any, headers: Record<string, string> }
 export type HttpBody = {}
 
@@ -19,6 +20,7 @@ export class HttpApi {
     preRequest(options: HttpOptions): HttpOptions
     postRequest(response: HttpResponse, url: string): Promise<any>
     request(method: string, url: string, options: HttpOptions): Promise<any>
+    jsonp(url: string, query: Record<string, any>, jsonpCallback: string): Promise<any>
     get(url: string, query?: Record<string, any>, headers?: Record<string, string>): Promise<any>
     post(url: string, body?: HttpBody, query?: Record<string, any>, headers?: Record<string, string>): Promise<any>
     put(url: string, body?: HttpBody, query?: Record<string, any>, headers?: Record<string, string>): Promise<any>

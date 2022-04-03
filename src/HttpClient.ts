@@ -1,7 +1,7 @@
 import { HttpBody, HttpForm, HttpJson } from './HttpBody'
 
 type PromiseHandle = { resolve: Function, reject: Function }
-export type HttpOptions = { headers?: Record<string, string>, query?: Record<string, any>, body?: HttpBody }
+export type HttpOptions = { headers?: Record<string, string>, query?: Record<string, any>, body?: HttpBody, jsonpCallback?: string }
 export type HttpResponse = { status: number, body: any, headers: Record<string, string> }
 
 export default class HttpClient {
@@ -23,13 +23,13 @@ export default class HttpClient {
         throw new Error('该方法必须由子类实现')
     }
 
-    request(method: string, url: string, { headers, query, body }: HttpOptions): Promise<HttpResponse> {
+    request(method: string, url: string, options: HttpOptions): Promise<HttpResponse> {
         method = method.toUpperCase()
-        if (query) {
-            url += (url.indexOf('?') == -1 ? '?' : '&') + HttpForm.encode(query)
+        if (options.query) {
+            url += (url.indexOf('?') == -1 ? '?' : '&') + HttpForm.encode(options.query)
         }
         return new Promise(async (resolve, reject) => {
-            if (method == 'GET') {
+            if (method == 'GET' || method == 'JSONP') {
                 if (this._getHandles[url]) {
                     this._getHandles[url].push({ resolve, reject })
                     return
@@ -38,20 +38,24 @@ export default class HttpClient {
                 }
             }
             try {
-                let response = await this.request0(method, url, { headers, query, body })
-                if (method == 'GET') {
+                let response = await this.request0(method, url, options)
+                if (method == 'GET' || method == 'JSONP') {
                     this.releaseHandles(url, undefined, response)
                 } else {
                     resolve(response)
                 }
             } catch (err) {
-                if (method == 'GET') {
+                if (method == 'GET' || method == 'JSONP') {
                     this.releaseHandles(url, err)
                 } else {
                     reject(err)
                 }
             }
         })
+    }
+
+    jsonp(url: string, query: Record<string, any>, jsonpCallback: string) {
+        return this.request('jsonp', url, { query, jsonpCallback })
     }
 
     get(url: string, query?: Record<string, any>, headers?: Record<string, string>) {
