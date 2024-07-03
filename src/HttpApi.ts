@@ -15,13 +15,13 @@ export default class HttpApi {
     }
 
     async postRequest({ status, body, headers }: HttpResponse, url: string) {
-        if (status == 200) {
-            const contentType = headers['content-type']
+        if (status >= 200 && status <= 204) {
+            const contentType = headers['content-type'].toLowerCase()
             if (/application\/json/.test(contentType)) {
                 body = JSON.parse(body)
             }
             return body
-        } else if (status == 302) {
+        } else if (status >= 301 && status <= 304 && headers.location) {
             return await this.get(headers.location)
         } else {
             throw new Error(`[http: ${status}] ` + body)
