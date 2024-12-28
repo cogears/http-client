@@ -5,7 +5,7 @@ import HttpClientImpl from './impl'
 const http: HttpClient = new HttpClientImpl()
 
 export default class HttpApi {
-    private readonly domain: string
+    readonly domain: string
     constructor(domain = '') {
         this.domain = domain
     }
@@ -24,7 +24,7 @@ export default class HttpApi {
         } else if (status >= 301 && status <= 304 && headers.location) {
             return await this.get(headers.location)
         } else {
-            throw new Error(`[http: ${status}] ` + body)
+            throw new Error(`[http: ${status}] ` + url + '\n' + body)
         }
     }
 

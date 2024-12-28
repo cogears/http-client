@@ -17,6 +17,7 @@ export type HttpBody = {}
 
 export class HttpApi {
     constructor(domain?: string)
+    get domain(): string
     preRequest(options: HttpOptions): HttpOptions
     postRequest(response: HttpResponse, url: string): Promise<any>
     request(method: string, url: string, options: HttpOptions): Promise<any>
