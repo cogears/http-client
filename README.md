@@ -18,9 +18,8 @@ npm install @cogears/http-client
 
 - 直接使用HttpClient发起请求，适用于少量http请求的场景：
 ```typescript
-import HttpClient from '@cogears/http-client'
+import http from '@cogears/http-client'
 
-const http = new HttpClient()
 let {status, body, headers} = await http.get(url)
 
 await http.post(url, http.json({name:'tom'}))
