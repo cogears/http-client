@@ -1,8 +1,5 @@
-import { HttpBody } from './HttpBody'
-import HttpClient, { HttpOptions, HttpResponse } from './HttpClient'
-import HttpClientImpl from './impl'
-
-const http: HttpClient = new HttpClientImpl()
+import { HttpBody } from './HttpBody.js'
+import HttpClient, { HttpOptions, HttpResponse } from './HttpClient.js'
 
 export default class HttpApi {
     readonly domain: string
@@ -10,11 +7,11 @@ export default class HttpApi {
         this.domain = domain
     }
 
-    preRequest(options: HttpOptions) {
+    preRequest(options: HttpOptions): HttpOptions {
         return options
     }
 
-    async postRequest({ status, body, headers }: HttpResponse, url: string) {
+    async postRequest({ status, body, headers }: HttpResponse, url: string): Promise<any> {
         if (status >= 200 && status <= 204) {
             const contentType = headers['content-type'].toLowerCase()
             if (/application\/json/.test(contentType)) {
@@ -28,56 +25,56 @@ export default class HttpApi {
         }
     }
 
-    async request(method: string, url: string, options: HttpOptions): Promise<any> {
+    async request<T>(method: string, url: string, options: HttpOptions): Promise<T> {
         if (!/^https?:\/\//i.test(url)) {
             url = this.domain + url
         }
         options = this.preRequest(options)
-        let response = await http.request(method, url, options)
+        let response = await HttpClient.instance.request(method, url, options)
         return await this.postRequest(response, url)
     }
 
-    jsonp(url: string, query: Record<string, any>, jsonpCallback: string) {
+    jsonp<T>(url: string, query: Record<string, any>, jsonpCallback: string): Promise<T> {
         return this.request('jsonp', url, { query, jsonpCallback })
     }
 
-    get(url: string, query?: Record<string, any>, headers?: Record<string, string>) {
+    get<T>(url: string, query?: Record<string, any>, headers?: Record<string, string>): Promise<T> {
         return this.request('get', url, { query, headers })
     }
 
-    post(url: string, body?: HttpBody, query?: Record<string, any>, headers?: Record<string, string>) {
+    post<T>(url: string, body?: HttpBody, query?: Record<string, any>, headers?: Record<string, string>): Promise<T> {
         return this.request('post', url, { query, body, headers })
     }
 
-    put(url: string, body?: HttpBody, query?: Record<string, any>, headers?: Record<string, string>) {
+    put<T>(url: string, body?: HttpBody, query?: Record<string, any>, headers?: Record<string, string>): Promise<T> {
         return this.request('put', url, { query, body, headers })
     }
 
-    patch(url: string, body?: HttpBody, query?: Record<string, any>, headers?: Record<string, string>) {
+    patch<T>(url: string, body?: HttpBody, query?: Record<string, any>, headers?: Record<string, string>): Promise<T> {
         return this.request('patch', url, { query, body, headers })
     }
 
-    delete(url: string, query?: Record<string, any>, headers?: Record<string, string>) {
+    delete<T>(url: string, query?: Record<string, any>, headers?: Record<string, string>): Promise<T> {
         return this.request('delete', url, { query, headers })
     }
 
-    static text(value: string) {
-        return http.text(value)
+    static text(value: string): HttpBody {
+        return HttpClient.instance.text(value)
     }
 
-    static json(value: any) {
-        return http.json(value)
+    static json(value: any): HttpBody {
+        return HttpClient.instance.json(value)
     }
 
-    static form(value: any) {
-        return http.form(value)
+    static form(value: any): HttpBody {
+        return HttpClient.instance.form(value)
     }
 
     static file(field: string, file: any, mime?: string): HttpBody {
-        return http.file(field, file, mime)
+        return HttpClient.instance.file(field, file, mime)
     }
 
     static fileContent(field: string, content: string, mime?: string): HttpBody {
-        return http.fileContent(field, content, mime)
+        return HttpClient.instance.fileContent(field, content, mime)
     }
 }

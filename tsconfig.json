@@ -1,32 +1,30 @@
 {
-  "compilerOptions": {
-    "strict": true,
-    "declaration": false,
-    "module": "commonjs",
-    "target": "ESNext",
-    "noImplicitAny": true,
-    "removeComments": true,
-    "preserveConstEnums": true,
-    "experimentalDecorators": true,
-    "sourceMap": false,
-    "outDir": "./dist",
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost"
-    ],
-    "types": [
-      "node",
-    ],
-    "baseUrl": ".",
-    "paths": {
-      "types": [
-        "types"
-      ]
-    }
-  },
-  "include": [
-    "src/**/*"
-  ]
+    "compilerOptions": {
+        "module": "NodeNext",
+        "target": "ESNext",
+        "moduleResolution": "NodeNext",
+        "strict": true,
+        "declaration": true,
+        "stripInternal": true,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "experimentalDecorators": true,
+        "sourceMap": false,
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "declarationDir": "./types",
+        "lib": [
+            "esnext",
+            "dom",
+            "dom.iterable",
+            "scripthost"
+        ],
+        "types": [
+            "node",
+        ],
+    },
+    "include": [
+        "src/**/*"
+    ]
 }

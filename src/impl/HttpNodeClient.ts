@@ -1,16 +1,20 @@
-import * as fs from 'fs'
-import * as http from 'http'
-import * as https from 'https'
-import * as path from 'path'
-import { HttpBody } from "../HttpBody"
-import HttpClient, { HttpOptions, HttpResponse } from "../HttpClient"
+import fs from 'fs'
+import http from 'http'
+import https from 'https'
+import path from 'path'
+import { HttpBody } from "../HttpBody.js"
+import HttpClient, { HttpOptions, HttpResponse } from "../HttpClient.js"
 
 const MIME_TEXT = [
     /^text\//,
     /^application\/(json|xml)/
 ]
 
+/** @internal */
 export default class HttpNodeClient extends HttpClient {
+    constructor() {
+        super()
+    }
     request0(method: string, url: string, { headers, body }: HttpOptions): Promise<HttpResponse> {
         if (method == 'JSONP') {
             method = 'GET'
@@ -58,11 +62,11 @@ export default class HttpNodeClient extends HttpClient {
         })
     }
 
-    file(field: string, file: string, mime: string = 'application/octet-stream') {
+    file(field: string, file: string, mime: string = 'application/octet-stream'): HttpBody {
         return new HttpMultipartFile(file, field, mime)
     }
 
-    fileContent(field: string, content: string, mime: string = 'application/octet-stream') {
+    fileContent(field: string, content: string, mime: string = 'application/octet-stream'): HttpBody {
         return new HttpMultipartContent(content, field, mime)
     }
 }

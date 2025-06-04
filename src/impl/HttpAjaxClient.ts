@@ -1,5 +1,5 @@
-import { HttpBody } from '../HttpBody'
-import HttpClient, { HttpOptions, HttpResponse } from '../HttpClient'
+import { HttpBody } from '../HttpBody.js'
+import HttpClient, { HttpOptions, HttpResponse } from '../HttpClient.js'
 
 function parseHeaders(content: string) {
     let headers: Record<string, string> = {}
@@ -12,9 +12,13 @@ function parseHeaders(content: string) {
 }
 
 let seed = 0
+/** @internal */
 export default class HttpAjaxClient extends HttpClient {
-
-    doJsonp(url: string, jsonpCallback: string): Promise<HttpResponse> {
+    constructor() {
+        super()
+    }
+    /** @internal */
+    private doJsonp(url: string, jsonpCallback: string): Promise<HttpResponse> {
         const jsonp = 'jcb' + seed++;
         url = url + (url.indexOf('?') == -1 ? '?' : '&') + `${jsonpCallback}=${jsonp}`
         return new Promise(resolve => {
@@ -79,7 +83,7 @@ export default class HttpAjaxClient extends HttpClient {
         })
     }
 
-    file(field: string, file: File, mime: string = 'application/octet-stream') {
+    file(field: string, file: File, mime: string = 'application/octet-stream'): HttpBody {
         return new FileBody(field, file, mime)
     }
 

@@ -1,5 +1,7 @@
 export class HttpBody {
+    /** @internal */
     private readonly _content: any
+    /** @internal */
     private readonly _contentType: string
     constructor(content: any, contentType: string = 'text/plain') {
         this._content = content
