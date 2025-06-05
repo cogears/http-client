@@ -67,7 +67,7 @@ export default abstract class HttpClient {
         return this.request('get', url, { query, headers })
     }
 
-    post(url: string, body?: any, query?: Record<string, any>, headers?: Record<string, string>): Promise<HttpResponse> {
+    post(url: string, body?: HttpBody, query?: Record<string, any>, headers?: Record<string, string>): Promise<HttpResponse> {
         return this.request('post', url, { body, query, headers })
     }
 

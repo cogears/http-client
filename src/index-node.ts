@@ -1,4 +1,7 @@
 import HttpApi from './HttpApi.js'
-import HttpClient from './impl/HttpNodeClient.js'
+import HttpClient from './HttpClient.js'
+import HttpNodeClient from './impl/HttpNodeClient.js'
 export { HttpApi }
-export default new HttpClient()
+export default function (): HttpClient {
+    return new HttpNodeClient()
+}
