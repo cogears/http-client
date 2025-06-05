@@ -5,6 +5,7 @@ export type HttpOptions = { headers?: Record<string, string>, query?: Record<str
 export type HttpResponse = { status: number, body: any, headers: Record<string, string> }
 
 export default abstract class HttpClient {
+    /** @internal */
     static instance: HttpClient
     /** @internal */
     private _getHandles: Record<string, PromiseHandle[]> = {}
@@ -22,10 +23,12 @@ export default abstract class HttpClient {
         }
     }
 
+    /** @internal */
     protected constructor() {
         HttpClient.instance = this
     }
 
+    /** @internal */
     protected abstract request0(method: string, url: string, options: HttpOptions): Promise<HttpResponse>
 
     request(method: string, url: string, options: HttpOptions): Promise<HttpResponse> {
