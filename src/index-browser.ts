@@ -1,7 +1,8 @@
 import HttpApi from './HttpApi.js'
-import HttpClient from './HttpClient.js'
+import { HttpBody } from './HttpBody.js'
+import HttpClient, { HttpOptions, HttpResponse } from './HttpClient.js'
 import HttpAjaxClient from './impl/HttpAjaxClient.js'
-export { HttpApi }
+export { HttpApi, HttpBody, HttpClient, HttpOptions, HttpResponse }
 export default function (): HttpClient {
     return new HttpAjaxClient()
 }
